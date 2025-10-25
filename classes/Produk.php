@@ -20,6 +20,7 @@ class Produk
 
   /**
    * Constructor
+   * Dipanggil otomatis saat object dibuat
    */
   public function __construct()
   {
@@ -27,10 +28,10 @@ class Produk
     $this->conn = $this->db->getConnection();
   }
 
-  /**
-   * Setter Methods
-   * Untuk mengisi nilai properties dari luar class
-   */
+  // ---------------------------
+  // Setter Methods
+  // ---------------------------
+
   public function setNama($nama)
   {
     $this->nama = $nama;
@@ -51,10 +52,10 @@ class Produk
     $this->foto = $foto;
   }
 
-  /**
-   * Getter Methods
-   * Untuk mendapatkan nilai properties dari luar class
-   */
+  // ---------------------------
+  // Getter Methods
+  // ---------------------------
+
   public function getId()
   {
     return $this->id;
@@ -80,9 +81,9 @@ class Produk
     return $this->foto;
   }
 
-  /**
-   * CREATE: Tambah produk baru
-   */
+  // ---------------------------
+  // CREATE: Tambah produk baru
+  // ---------------------------
   public function create()
   {
     $query = "INSERT INTO produk (nama, deskripsi, harga, foto) VALUES (?, ?, ?, ?)";
@@ -99,13 +100,12 @@ class Produk
     if ($stmt->execute()) {
       return true;
     }
-
     return false;
   }
 
-  /**
-   * READ: Ambil semua produk
-   */
+  // ---------------------------
+  // READ: Ambil semua produk
+  // ---------------------------
   public function readAll()
   {
     $query = "SELECT * FROM produk ORDER BY created_at DESC";
@@ -113,9 +113,9 @@ class Produk
     return $result;
   }
 
-  /**
-   * READ: Ambil satu produk berdasarkan ID
-   */
+  // ---------------------------
+  // READ: Ambil satu produk berdasarkan ID
+  // ---------------------------
   public function readOne($id)
   {
     $query = "SELECT * FROM produk WHERE id = ?";
@@ -126,50 +126,64 @@ class Produk
     return $result->fetch_assoc();
   }
 
-  /**
-   * Method untuk upload foto
-   */
+  // ---------------------------
+  // UPLOAD FOTO: Simpan file gambar produk
+  // ---------------------------
   public function uploadFoto($file)
   {
     $target_dir = "uploads/";
-
-    $file_extension = strtolower(
-      pathinfo($file["name"], PATHINFO_EXTENSION)
-    );
+    $file_extension = strtolower(pathinfo($file["name"], PATHINFO_EXTENSION));
 
     $new_filename = uniqid() . '.' . $file_extension;
     $target_file = $target_dir . $new_filename;
 
-    // Validasi file
+    // Validasi ekstensi file
     $allowed_types = array('jpg', 'jpeg', 'png', 'gif');
     if (!in_array($file_extension, $allowed_types)) {
       return false;
     }
 
-    // Validasi ukuran (max 2MB)
+    // Validasi ukuran file (maksimum 2MB)
     if ($file["size"] > 2000000) {
       return false;
     }
 
-    // Upload file
+    // Upload file ke folder uploads/
     if (move_uploaded_file($file["tmp_name"], $target_file)) {
       return $new_filename;
     }
 
     return false;
   }
-  
-  public function delete($id) {
+
+  // ---------------------------
+  // DELETE: Hapus produk
+  // ---------------------------
+  public function delete($id)
+  {
+    // 1️⃣ Ambil data produk berdasarkan ID untuk mendapatkan nama file foto
     $data = $this->readOne($id);
-    if (!$data){
+
+    // Jika data tidak ditemukan, return false
+    if (!$data) {
       return false;
     }
+
+    // 2️⃣ Jika produk memiliki foto dan file-nya ada, hapus dari folder uploads/
     if (!empty($data['foto']) && file_exists('uploads/' . $data['foto'])) {
-      unlink('uploads/' . $data['foto']);
+      unlink('uploads/' . $data['foto']); // hapus file foto dari server
     }
+
+    // 3️⃣ Buat query SQL untuk menghapus record produk berdasarkan ID
     $query = "DELETE FROM produk WHERE id = ?";
+
+    // 4️⃣ Siapkan prepared statement (lebih aman dari SQL injection)
     $stmt = $this->conn->prepare($query);
+
+    // 5️⃣ Bind parameter id (i = integer)
     $stmt->bind_param("i", $id);
+
+    // 6️⃣ Jalankan perintah dan kembalikan hasil true/false
     return $stmt->execute();
   }
 }

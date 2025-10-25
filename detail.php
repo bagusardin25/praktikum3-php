@@ -68,11 +68,18 @@ if (!$produk) {
 
         <div class="actions">
           <a href="index.php" class="btn btn-secondary">⬅️ Kembali</a>
-          <!-- Tombol Edit dan Delete akan dibuat di tugas -->
+          <a href="edit.php?id=<?php echo $produk['id']; ?>" 
+              class="btn btn-primary">
+              ✏️ Edit
+          </a>
+          <a href="delete.php?id=<?php echo $produk['id']; ?>" 
+              class="btn btn-danger"
+              onclick="return confirm('Yakin ingin menghapus produk ini?')">
+              🗑️ Delete
+          </a>
         </div>
       </div>
     </div>
   </div>
 </body>
-
 </html>

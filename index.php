@@ -58,5 +58,4 @@ $result = $produk->readAll();
     </div>
   </div>
 </body>
-
 </html>
