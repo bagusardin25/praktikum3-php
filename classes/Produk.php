@@ -156,34 +156,34 @@ class Produk
     return false;
   }
 
-  // ---------------------------
-  // DELETE: Hapus produk
-  // ---------------------------
+// function baru untuk delete
   public function delete($id)
   {
-    // 1️⃣ Ambil data produk berdasarkan ID untuk mendapatkan nama file foto
     $data = $this->readOne($id);
-
-    // Jika data tidak ditemukan, return false
     if (!$data) {
       return false;
     }
-
-    // 2️⃣ Jika produk memiliki foto dan file-nya ada, hapus dari folder uploads/
     if (!empty($data['foto']) && file_exists('uploads/' . $data['foto'])) {
-      unlink('uploads/' . $data['foto']); // hapus file foto dari server
+      unlink('uploads/' . $data['foto']); 
     }
-
-    // 3️⃣ Buat query SQL untuk menghapus record produk berdasarkan ID
     $query = "DELETE FROM produk WHERE id = ?";
-
-    // 4️⃣ Siapkan prepared statement (lebih aman dari SQL injection)
     $stmt = $this->conn->prepare($query);
-
-    // 5️⃣ Bind parameter id (i = integer)
     $stmt->bind_param("i", $id);
+    return $stmt->execute();
+  }
 
-    // 6️⃣ Jalankan perintah dan kembalikan hasil true/false
+  // Function baru untuk update
+  public function update($id){
+    $query = "UPDATE produk SET nama = ?, deskripsi = ?, harga = ?, foto = ? WHERE id=?";
+    $stmt = $this->conn->prepare($query);
+    $stmt->bind_param(
+      "ssdsi",
+      $this->nama,
+      $this->deskripsi,
+      $this->harga,
+      $this->foto,
+      $id
+    );
     return $stmt->execute();
   }
 }
