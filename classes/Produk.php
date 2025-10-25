@@ -158,4 +158,18 @@ class Produk
 
     return false;
   }
+  
+  public function delete($id) {
+    $data = $this->readOne($id);
+    if (!$data){
+      return false;
+    }
+    if (!empty($data['foto']) && file_exists('uploads/' . $data['foto'])) {
+      unlink('uploads/' . $data['foto']);
+    }
+    $query = "DELETE FROM produk WHERE id = ?";
+    $stmt = $this->conn->prepare($query);
+    $stmt->bind_param("i", $id);
+    return $stmt->execute();
+  }
 }
