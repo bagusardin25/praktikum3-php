@@ -63,19 +63,13 @@ if (empty($error)){
 <body>
 <div class="container">
     <h1>✏️ Edit Produk</h1>
-
-    <!-- Tampilkan pesan sukses atau error -->
     <?php if ($message): ?>
         <div class="alert alert-success"><?php echo $message; ?></div>
     <?php endif; ?>
-
     <?php if ($error): ?>
         <div class="alert alert-error"><?php echo $error; ?></div>
     <?php endif; ?>
-
-    <!-- Form edit produk -->
     <form method="POST" enctype="multipart/form-data" class="form">
-
         <div class="form-group">
             <label for="nama">Nama Produk:</label>
             <input type="text" id="nama" name="nama"
@@ -92,7 +86,6 @@ if (empty($error)){
             <input type="number" id="harga" name="harga"
                    value="<?php echo htmlspecialchars($data['harga']); ?>" step="0.01" required>
         </div>
-
         <div class="form-group">
             <label>Foto Saat Ini:</label>
             <?php if ($data['foto']): ?>
@@ -101,12 +94,10 @@ if (empty($error)){
                 <div class="no-image">Tidak ada gambar</div>
             <?php endif; ?>
         </div>
-
         <div class="form-group">
             <label for="foto">Ganti Foto (optional):</label>
             <input type="file" id="foto" name="foto" accept="image/*">
         </div>
-
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">💾 Update</button>
             <a href="detail.php?id=<?php echo $id; ?>" class="btn btn-secondary">❌ Batal</a>
